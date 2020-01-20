@@ -3,6 +3,7 @@ package qq.life.community.community.service;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import qq.life.community.community.dto.PaginationDto;
 import qq.life.community.community.dto.QuestionDto;
 import qq.life.community.community.mapper.QuestionMapper;
 import qq.life.community.community.mapper.UserMapper;
@@ -18,9 +19,13 @@ public class QuestionService {
     QuestionMapper questionMapper;
     @Autowired
     UserMapper userMapper;
-    public List<QuestionDto> list() {
-        List<Question> questionList = questionMapper.list();
+    public PaginationDto list(Integer currentPage, Integer size) {
+        Integer offset = size * (currentPage -1);
+
+        List<Question> questionList = questionMapper.list(offset,size);
         List<QuestionDto> questionDtos=new ArrayList<>();
+
+        PaginationDto paginationDto = new PaginationDto();
         for(Question question:questionList){
             User user = userMapper.findById(question.getId());
             QuestionDto questionDto = new QuestionDto();
@@ -29,6 +34,10 @@ public class QuestionService {
             questionDto.setUser(user);
             questionDtos.add(questionDto);
         }
-        return questionDtos;
+        paginationDto.setQuestions(questionDtos);
+
+        Integer TotalCount = questionMapper.count();
+        paginationDto.setPagination(TotalCount,currentPage,size);
+        return paginationDto;
     }
 }
