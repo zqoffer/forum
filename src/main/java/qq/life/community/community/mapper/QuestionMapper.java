@@ -2,8 +2,12 @@ package qq.life.community.community.mapper;
 
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 import org.springframework.stereotype.Component;
 import qq.life.community.community.model.Question;
+
+import java.util.List;
 
 /**
  * 将数据注入到数据库
@@ -11,8 +15,12 @@ import qq.life.community.community.model.Question;
 @Mapper
 @Component
 public interface QuestionMapper {
-    @Insert("insert into (title,description,gm_create,gm_modified,creator,tag) " +
-            "values(#{title},#{description},#{gmCreate},#{gmModified},#{creator},#{tag})")
+
+    @Select("select * from Question")
+    public List<Question> list();
+
+    @Insert("insert into Question(title,description,gmt_create,gmt_modified,creator,tag) " +
+            "values(#{title},#{description},#{gmtCreate},#{gmtModified},#{creator},#{tag})")
     public void create(Question question);
 
 }

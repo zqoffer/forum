@@ -31,6 +31,21 @@ public class PublishController {
                             @RequestParam("description") String description,
                             @RequestParam("tag") String tag,
                             HttpServletRequest request,Model model){
+        //再输入信息后保存到request域（可以从页面获取值），防止因为都登陆报错后填写的值消失
+        model.addAttribute("title",title);
+        model.addAttribute("description",description);
+        model.addAttribute("tag",tag);
+        //填写信息不能为空
+        if(title == null || title.equals("")){
+            model.addAttribute("error","标题不能为空");
+        }
+        if(description == null || description.equals("")){
+            model.addAttribute("error","内容描述不能为空");
+        }
+        if(tag == null || tag.equals("")){
+            model.addAttribute("error","标签不能为空");
+        }
+
         //获取user对象信息
         User user = null;
         Cookie[] cookies = request.getCookies();
