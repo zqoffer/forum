@@ -27,6 +27,7 @@ public class PublishController {
     }
 
     @PostMapping("/publish")
+    //@RequestParam接受输入的参数
     public String doPublish(@RequestParam("title") String title,
                             @RequestParam("description") String description,
                             @RequestParam("tag") String tag,

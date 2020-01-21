@@ -42,4 +42,28 @@ public class QuestionService {
         paginationDto.setPagination(totalCount,currentPage,size);
         return paginationDto;
     }
+
+    public PaginationDto list(Integer userId, Integer currentPage, Integer size) {
+        Integer offset = size * (currentPage -1);
+
+        List<Question> questionList = questionMapper.listByUser(userId,offset,size);
+        List<QuestionDto> questionDtos=new ArrayList<>();
+
+        PaginationDto paginationDto = new PaginationDto();
+        for(Question question:questionList){
+            User user = userMapper.findById(question.getId());
+            QuestionDto questionDto = new QuestionDto();
+            //吧两个对象中属性名相同的属性进行复制
+            BeanUtils.copyProperties(question,questionDto);
+            questionDto.setUser(user);
+            questionDtos.add(questionDto);
+        }
+        paginationDto.setQuestions(questionDtos);
+
+        Integer totalCount = questionMapper.countById(userId);
+
+
+        paginationDto.setPagination(totalCount,currentPage,size);
+        return paginationDto;
+    }
 }
