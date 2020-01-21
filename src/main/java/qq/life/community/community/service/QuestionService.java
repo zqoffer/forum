@@ -36,8 +36,10 @@ public class QuestionService {
         }
         paginationDto.setQuestions(questionDtos);
 
-        Integer TotalCount = questionMapper.count();
-        paginationDto.setPagination(TotalCount,currentPage,size);
+        Integer totalCount = questionMapper.count();
+
+
+        paginationDto.setPagination(totalCount,currentPage,size);
         return paginationDto;
     }
 }

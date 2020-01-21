@@ -12,11 +12,11 @@ public class PaginationDto {
     private boolean showEnd;
 
     private Integer currentPage;
+    private Integer totalPage;
     private List<Integer> pages = new ArrayList<>();
 
     //获得总页数
     public void setPagination(Integer totalCount, Integer currentPage, Integer size) {
-        Integer totalPage = 0;
 
         if(totalCount%size == 0){
             totalPage = totalCount/size;
@@ -24,6 +24,14 @@ public class PaginationDto {
             totalPage = totalCount/size + 1;
         }
 
+        if(currentPage < 1){
+            currentPage = 1;
+        }
+
+        if(currentPage >totalPage)
+            currentPage = totalPage;
+
+        this.currentPage=currentPage;
         //显示哪些页面数标
         pages.add(currentPage);
         for(int i = 1;i <= 3; i++){
@@ -39,13 +47,13 @@ public class PaginationDto {
             showPre = true;
         }
 
-        if(currentPage ==totalPage){
+        if(!pages.contains(1)){
             showFirst = false;
         }else{
             showFirst = true;
         }
 
-        if(!pages.contains(1)){
+        if(currentPage==totalPage){
             showNext = false;
         }else{
             showNext = true;
@@ -115,5 +123,11 @@ public class PaginationDto {
         this.pages = pages;
     }
 
+    public Integer getTotalPage() {
+        return totalPage;
+    }
 
+    public void setTotalPage(Integer totalPage) {
+        this.totalPage = totalPage;
+    }
 }
