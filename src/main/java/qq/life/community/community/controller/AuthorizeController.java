@@ -10,8 +10,10 @@ import qq.life.community.community.dto.GithubUser;
 import qq.life.community.community.mapper.UserMapper;
 import qq.life.community.community.model.User;
 import qq.life.community.community.provider.GithubProvider;
+import qq.life.community.community.service.UserService;
 
 import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.UUID;
 
@@ -19,6 +21,8 @@ import java.util.UUID;
 public class AuthorizeController {
     @Autowired
     private GithubProvider githubProvider;
+    @Autowired
+    private UserService userService;
 
     @Value("${github.client.id}")
     private String clientId;
@@ -48,11 +52,11 @@ public class AuthorizeController {
             String token = UUID.randomUUID().toString();
             user.setToken(token);
             user.setName(githubUser.getName());
-            user.setGmtCreate(System.currentTimeMillis());
-            user.setGmtModified(user.getGmtCreate());
+
             user.setAccountId(String.valueOf(githubUser.getId()));
+
+            userService.createOrUpdate(user);
             //吧user信息传入数据库
-            userMapper.insert(user);
             response.addCookie(new Cookie("token",token));//token写入cookie
 
             return "redirect:/";
@@ -60,7 +64,14 @@ public class AuthorizeController {
             //登录失败，重新登录
             return "redirect:/";
         }
+    }
 
-
+    @GetMapping("/logout")
+    public String logOut(HttpServletRequest request,HttpServletResponse response){
+        request.getSession().removeAttribute("user");
+        Cookie cookie = new Cookie("token",null);
+        cookie.setMaxAge(0);
+        response.addCookie(cookie);
+        return "redirect:/";
     }
 }

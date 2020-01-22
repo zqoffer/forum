@@ -4,12 +4,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import qq.life.community.community.dto.QuestionDto;
 import qq.life.community.community.mapper.QuestionMapper;
 import qq.life.community.community.mapper.UserMapper;
 import qq.life.community.community.model.Question;
 import qq.life.community.community.model.User;
+import qq.life.community.community.service.QuestionService;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -17,10 +20,18 @@ import javax.servlet.http.HttpServletRequest;
 @Controller
 public class PublishController {
 
+
     @Autowired
-    private QuestionMapper questionMapper;
-    @Autowired
-    private UserMapper userMapper;
+    private QuestionService questionService;
+    @GetMapping("/publish/{id}")
+    public  String edit(@PathVariable ("id") Integer id,Model model){
+        QuestionDto question = questionService.getById(id);
+        model.addAttribute("title",question.getTitle());
+        model.addAttribute("description",question.getDescription());
+        model.addAttribute("tag", question.getTag());
+        model.addAttribute("id",question.getId());
+        return "publish";
+    }
     @GetMapping("/publish")
     public String publish(){
         return "publish";
@@ -31,6 +42,7 @@ public class PublishController {
     public String doPublish(@RequestParam("title") String title,
                             @RequestParam("description") String description,
                             @RequestParam("tag") String tag,
+                            @RequestParam("id") Integer id,
                             HttpServletRequest request,Model model){
         //再输入信息后保存到request域（可以从页面获取值），防止因为都登陆报错后填写的值消失
         model.addAttribute("title",title);
@@ -48,18 +60,7 @@ public class PublishController {
         }
 
         //获取user对象信息
-        User user = null;
-        Cookie[] cookies = request.getCookies();
-        if(cookies != null){
-            for(Cookie cookie : cookies){
-                if(cookie.getName().equals("token")){
-                    String token = cookie.getValue();
-                    user =  userMapper.findByToken(token);
-                    request.getSession().setAttribute("user",user);
-                    break;
-                }
-            }
-        }
+        User user = (User)request.getSession().getAttribute("user");
         if(user == null){
             model.addAttribute("error","用户未登录");
             return "publish";
@@ -71,10 +72,11 @@ public class PublishController {
         question.setDescription(description);
         question.setTag(tag);
         question.setCreator(user.getId());
-        question.setGmtCreate(System.currentTimeMillis());
-        question.setGmtModified(question.getGmtCreate());
+
+        question.setId(id);
         //数据注入数据库
-        questionMapper.create(question);
+        questionService.createOrUpdate(question);
+
 
         return "redirect:/";
     }

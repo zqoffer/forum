@@ -1,9 +1,6 @@
 package qq.life.community.community.mapper;
 
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.*;
 import org.springframework.stereotype.Component;
 import qq.life.community.community.model.Question;
 
@@ -31,4 +28,12 @@ public interface QuestionMapper {
 
     @Select("select count(1) from question where creator = #{userId}")
     public Integer countById(@Param("userId")Integer userId);
+
+    @Select("select * from question where id=#{id}")
+    public Question getById(@Param("id") Integer id);
+
+    @Update("update question set " +
+            "title = #{title},description=#{description},gmt_create=#{gmtCreate},gmt_modified=#{gmtModified}," +
+            "creator=#{creator},tag=#{tag} where id = #{id}")
+    void update(Question question);
 }

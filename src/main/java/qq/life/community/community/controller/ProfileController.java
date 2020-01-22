@@ -1,6 +1,8 @@
 package qq.life.community.community.controller;
 
+import jdk.nashorn.internal.ir.RuntimeNode;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.web.servlet.server.Session;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,8 +21,6 @@ import javax.servlet.http.HttpServletRequest;
 public class ProfileController {
 
     @Autowired
-    private UserMapper userMapper;
-    @Autowired
     private QuestionService questionService;
     @GetMapping("/profile/{action}")
     public String profile(HttpServletRequest request, @PathVariable("action") String action, Model model,
@@ -28,17 +28,7 @@ public class ProfileController {
                           @RequestParam(name = "size",defaultValue = "5") Integer size) {
 
         Cookie[] cookies = request.getCookies();
-        User user = null;
-        if(cookies != null){
-            for(Cookie cookie : cookies){
-                if(cookie.getName().equals("token")){
-                    String token = cookie.getValue();
-                    user =  userMapper.findByToken(token);
-                    request.getSession().setAttribute("user",user);
-                    break;
-                }
-            }
-        }
+        User user = (User)request.getSession().getAttribute("user");
         if(user == null){
             return "redirect:/";
         }

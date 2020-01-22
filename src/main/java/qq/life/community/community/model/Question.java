@@ -1,7 +1,7 @@
 package qq.life.community.community.model;
 
 public class Question {
-    private int id;
+    private Integer id;
     private String title;
     private Long gmtCreate;
     private Long gmtModified;
@@ -12,11 +12,11 @@ public class Question {
     private String tag;
     private String description;
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
