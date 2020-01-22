@@ -9,6 +9,7 @@ import qq.life.community.community.mapper.QuestionMapper;
 import qq.life.community.community.mapper.UserMapper;
 import qq.life.community.community.model.Question;
 import qq.life.community.community.model.User;
+import qq.life.community.community.myEception.CustomizeException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -68,7 +69,11 @@ public class QuestionService {
     }
 
     public QuestionDto getById(Integer id) {
+
         Question question = questionMapper.getById(id);
+        if(question == null){
+            throw new CustomizeException("该问题不存在");
+        }
         QuestionDto questionDto = new QuestionDto();
         //吧两个对象中属性名相同的属性进行复制
         BeanUtils.copyProperties(question,questionDto);
@@ -86,5 +91,11 @@ public class QuestionService {
             question.setGmtModified(question.getGmtCreate());
             questionMapper.update(question);
         }
+    }
+
+    public void incView(Integer id) {
+        Question question = questionMapper.getById(id);
+        Integer viewCount = question.getViewCount() + 1;
+        questionMapper.updateViewCount(id,viewCount);
     }
 }

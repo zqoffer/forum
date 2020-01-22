@@ -36,4 +36,7 @@ public interface QuestionMapper {
             "title = #{title},description=#{description},gmt_create=#{gmtCreate},gmt_modified=#{gmtModified}," +
             "creator=#{creator},tag=#{tag} where id = #{id}")
     void update(Question question);
+
+    @Update("update question set view_count = #{viewCount} where id = #{id}")
+    void updateViewCount(@Param("id") Integer id,@Param("viewCount") Integer viewCount);
 }
