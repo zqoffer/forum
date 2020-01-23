@@ -9,6 +9,7 @@ import qq.life.community.community.mapper.QuestionMapper;
 import qq.life.community.community.mapper.UserMapper;
 import qq.life.community.community.model.Question;
 import qq.life.community.community.model.User;
+import qq.life.community.community.myEception.CustomizeErrorCode;
 import qq.life.community.community.myEception.CustomizeException;
 
 import java.util.ArrayList;
@@ -72,7 +73,7 @@ public class QuestionService {
 
         Question question = questionMapper.getById(id);
         if(question == null){
-            throw new CustomizeException("该问题不存在");
+            throw new CustomizeException(CustomizeErrorCode.QUESTION_NOT_FOUND);
         }
         QuestionDto questionDto = new QuestionDto();
         //吧两个对象中属性名相同的属性进行复制
@@ -89,7 +90,7 @@ public class QuestionService {
             questionMapper.create(question);
         }else{
             question.setGmtModified(question.getGmtCreate());
-            questionMapper.update(question);
+             questionMapper.update(question);
         }
     }
 

@@ -10,7 +10,7 @@ public class Comment {
     private Integer likeCount;
     private String content;
 
-    public Integer getType() {
+    public Integer  getType() {
         return type;
     }
 
